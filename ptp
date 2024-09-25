@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Check if there are any PNG files in the current directory
+if ls *.png &> /dev/null; then
+    # Create the 'original' directory if it doesn't exist
+    mkdir -p original
+    
+    # Move all PNG files to the 'original' directory
+    mv *.png original/
+    
+    # Change to the 'original' directory
+    cd original
+    
+    # Process each PNG file with ImageMagick
+    for image in *.png; do
+        magick "$image" "../${image}"
+    done
+    
+    echo "PNG files processed successfully."
+else
+    echo "No PNG files found in the current directory."
+fi
