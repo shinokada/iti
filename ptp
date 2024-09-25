@@ -4,21 +4,29 @@ cd ~/Documents/ptp
 
 # Check if there are any PNG files in the current directory
 if ls *.png &> /dev/null; then
-    # Create the 'original' directory if it doesn't exist
-    mkdir -p original
-    
-    # Move all PNG files to the 'original' directory
-    mv *.png original/
-    
-    # Change to the 'original' directory
-    cd original
-    
-    # Process each PNG file with ImageMagick
-    for image in *.png; do
-        magick "$image" "../${image}"
-    done
-    
-    echo "PNG files processed successfully."
+  # Rename PNG files: replace spaces with underscores and convert to lowercase
+  for file in *.png; do
+      new_name=$(echo "$file" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+      if [ "$file" != "$new_name" ]; then
+          mv "$file" "$new_name"
+          echo "Renamed: $file -> $new_name"
+      fi
+  done
+  # Create the 'original' directory if it doesn't exist
+  mkdir -p original
+  
+  # Move all PNG files to the 'original' directory
+  mv *.png original/
+  
+  # Change to the 'original' directory
+  cd original
+  
+  # Process each PNG file with ImageMagick
+  for image in *.png; do
+      magick "$image" "../${image}"
+  done
+  
+  echo "PNG files processed successfully."
 else
-    echo "No PNG files found in the current directory."
+  echo "No PNG files found in the current directory."
 fi
