@@ -6,9 +6,13 @@ cd ~/Documents/ptp
 if ls *.png &> /dev/null; then
   # Rename PNG files: replace spaces with underscores and convert to lowercase
   for file in *.png; do
-      new_name=$(echo "$file" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+      # Generate new name (lowercase with underscores)
+      new_name=$(echo "$file" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+      
+      # Check if the new name is different from the original
       if [ "$file" != "$new_name" ]; then
-          mv "$file" "$new_name"
+          # Rename using a temporary file to handle case-sensitivity on macOS
+          mv "$file" "temp_$file" && mv "temp_$file" "$new_name"
           echo "Renamed: $file -> $new_name"
       fi
   done
