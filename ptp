@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd ~/Documents/ptp
+
 # Check if there are any PNG files in the current directory
 if ls *.png &> /dev/null; then
     # Create the 'original' directory if it doesn't exist
