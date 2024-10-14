@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+cd ~/Documents/iti
+
+# Function to process files of a specific extension
+process_files() {
+    local extension=$1
+    
+    # Check if there are any files with the given extension in the current directory
+    if ls *.$extension &> /dev/null; then
+        # Rename files: replace spaces with hyphens and convert to lowercase
+        for file in *.$extension; do
+            # Generate new name (lowercase with hyphens)
+            new_name=$(echo "$file" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+            
+            # Check if the new name is different from the original
+            if [ "$file" != "$new_name" ]; then
+                # Rename using a temporary file to handle case-sensitivity on macOS
+                mv "$file" "temp_$file" && mv "temp_$file" "$new_name"
+                echo "Renamed: $file -> $new_name"
+            fi
+        done
+        
+        # Create the 'original' directory if it doesn't exist
+        mkdir -p original
+        
+        # Move all files with the given extension to the 'original' directory
+        mv *.$extension original/
+        
+        # Change to the 'original' directory
+        cd original
+        
+        # Process each file with ImageMagick
+        for image in *.$extension; do
+            magick "$image" "../${image}"
+        done
+        
+        # Change back to the parent directory
+        cd ..
+        
+        echo "Files with .$extension extension processed successfully."
+    else
+        echo "No files with .$extension extension found in the current directory."
+    fi
+}
+
+# Process PNG, JPG, and JPEG files
+for ext in png jpg jpeg; do
+    process_files $ext
+done
+
+echo "All image files processed."
